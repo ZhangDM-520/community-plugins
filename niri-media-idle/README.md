@@ -8,7 +8,6 @@ Niri Media Idle starts the bundled media-aware idle bridge and gives you a compa
 | --- | --- |
 | ID | `zhangdm-520/niri-media-idle` |
 | Entries | Bar widget: `niri-media-idle`; service: `niri-media-idle-service` |
-| Tested compositor | niri on Wayland (bundled bridge integration target; plugin UI not live-tested) |
 
 ## Requirements
 
@@ -18,7 +17,9 @@ Install `python3` 3.11 or newer, `systemctl`, `systemd-run`, `systemd-inhibit`, 
 
 Enable `zhangdm-520/niri-media-idle` in Noctalia and add the `niri-media-idle` widget to a bar. By default, the service starts its transient user unit when the plugin loads. The `Start bridge automatically` setting starts the bridge when enabled and stops an already-running unit when disabled. With the setting already false at initial plugin load, the service is not started (the plugin may refresh its status). A bar click can still start or stop the bridge for the current session without changing the setting. The service stops on an orderly Noctalia shutdown or plugin disable; a Luau reload leaves the unit running. If Noctalia crashes, the unit remains tied to `graphical-session.target` and stops when that session target stops. Right-click the widget to refresh the service state.
 
-The service can also be controlled through IPC:
+## IPC
+
+The service entry accepts these events without a payload:
 
 ```sh
 noctalia msg plugin zhangdm-520/niri-media-idle:niri-media-idle-service all status
@@ -27,6 +28,10 @@ noctalia msg plugin zhangdm-520/niri-media-idle:niri-media-idle-service all stop
 noctalia msg plugin zhangdm-520/niri-media-idle:niri-media-idle-service all toggle
 noctalia msg plugin zhangdm-520/niri-media-idle:niri-media-idle-service all refresh
 ```
+
+- `status` and `refresh` query the service and update the widget without changing the unit.
+- `start` and `stop` start or stop the transient bridge unit.
+- `toggle` stops an active unit or starts an inactive one.
 
 ## Settings
 
